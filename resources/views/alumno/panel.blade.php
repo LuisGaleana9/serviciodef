@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Panel del Alumno</title>
+</head>
+<body>
+    <h1>Panel de Alumno</h1>
+    @include('components.bienvenido')
+    <a href="{{ route('login.destroy') }}">Cerrar Sesión</a>
+
+    @include('components.retornar')
+</body>
+</html>
