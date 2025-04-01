@@ -48,9 +48,9 @@
                             <td>{{ $student->password->matricula }}</td>
                             <td>{{ $student->student->estado_servicio }}</td>
                             <td>
-                                <a href="{{ route('root.edit.professor', $student->id) }}" 
+                                <a href="{{ route('professor.edit.student', $student->id) }}" 
                                    class="btn btn-sm btn-info">Editar</a>
-                                <form action="{{ route('root.destroy.professor', $student->id) }}" 
+                                <form action="{{ route('professor.destroy.student', $student->id) }}" 
                                       method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')

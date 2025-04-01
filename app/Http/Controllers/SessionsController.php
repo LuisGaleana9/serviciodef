@@ -48,8 +48,8 @@ class SessionsController extends Controller
                         return redirect('/root');
                     } elseif ($consultarol[0]->role == 'professor') {
                         return redirect('/profesor');
-                    } elseif ($consultarol[0]->role == 'alumno') {
-                        return redirect('/alumno');
+                    } elseif ($consultarol[0]->role == 'student') {
+                        return redirect('/student');
                     }else{
                         return redirect('/login');
                     }

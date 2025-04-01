@@ -10,7 +10,6 @@ class Student extends Model
     
     protected $fillable = [
         'user_id', 
-        'area',
         'estado_servicio'
     ];
 

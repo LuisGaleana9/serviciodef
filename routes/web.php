@@ -3,6 +3,7 @@
 use App\Http\Controllers\RootController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\ProfesorController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,6 +43,9 @@ Route::get('/logout', [SessionsController::class, 'destroy'])
 Route::get('/profesor', [ProfesorController::class, 'index'])->name('professor.index');
 Route::get('/profesor/student/create', [ProfesorController::class, 'createStudent'])->name('professor.create.student');
 Route::post('/profesor/student', [ProfesorController::class, 'storeStudent'])->name('professor.store.student');
+Route::get('/profesor/student/{id}/edit', [ProfesorController::class, 'editStudent'])->name('professor.edit.student');
+Route::put('/profesor/student/{id}', [ProfesorController::class, 'updateStudent'])->name('professor.update.student');
+Route::delete('/profesor/student/{id}', [ProfesorController::class, 'destroyStudent'])->name('professor.destroy.student');
 
 //Alumno
-Route::get('/alumno', [AlumnoController::class, 'index'])->name('alumno.index');
+Route::get('/student', [StudentController::class, 'index']);
