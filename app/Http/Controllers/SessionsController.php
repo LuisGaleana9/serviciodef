@@ -57,7 +57,7 @@ class SessionsController extends Controller
                     //si la contraseña es incorrecta, se redirige a login
                     return redirect()->back()
                     ->withInput()
-                    ->withErrors(['matricula' => 'Contraseña erronea!']);
+                    ->withErrors(['matricula' => 'Contraseña incorrecta!']);
                 }
         }
         return redirect('/login');

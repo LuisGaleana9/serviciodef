@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\RootController;
 use App\Http\Controllers\SessionsController;
+use App\Http\Controllers\ProfesorController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,9 +27,6 @@ Route::get('/logout', [SessionsController::class, 'destroy'])
     ->name('login.destroy');
 
 //ROOT
-Route::get('/root', function () {
-    return view('root.panel');
-});
 
 // CRUD ROOT
 // Route::middleware(['auth'])->group(function () {
@@ -38,14 +36,12 @@ Route::get('/root', function () {
     Route::get('/root/professor/{id}/edit', [RootController::class, 'editProfessor'])->name('root.edit.professor');
     Route::put('/root/professor/{id}', [RootController::class, 'updateProfessor'])->name('root.update.professor');
     Route::delete('/root/professor/{id}', [RootController::class, 'destroyProfessor'])->name('root.destroy.professor');
-/// }); lol
+// });
 
 //Profesor
-Route::get('/profesor', function () {
-    return view('profesor.panel');
-});
+Route::get('/profesor', [ProfesorController::class, 'index'])->name('professor.index');
+Route::get('/profesor/student/create', [ProfesorController::class, 'createStudent'])->name('professor.create.student');
+Route::post('/profesor/student', [ProfesorController::class, 'storeStudent'])->name('professor.store.student');
 
 //Alumno
-Route::get('/alumno', function () {
-    return view('alumno.panel');
-});
+Route::get('/alumno', [AlumnoController::class, 'index'])->name('alumno.index');

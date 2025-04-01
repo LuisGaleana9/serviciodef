@@ -11,16 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class RootController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            if (!session()->has('id') || session('role') !== 'root') {
-                return redirect('/login');
-            }
-            return $next($request);
-        });
-    }
-
     public function index()
     {
         $professors = User::where('role', 'professor')
