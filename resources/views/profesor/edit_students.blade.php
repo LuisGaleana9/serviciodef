@@ -23,8 +23,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('professor.update.student', $student->id) }}" method="POST">
-                    @csrf
+                    <form action="{{ route('profesor.update.student', ['id' => $student->id]) }}" method="POST" class="register-form" id="register-form">                    @csrf
                     @method('PUT')
                     
                     <div class="mb-3">
@@ -78,6 +77,67 @@
                     <div class="mb-3">
                         <a href="{{ route('professor.index') }}" class="btn btn-secondary">Cancelar</a>
                         <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </div>
+                </form>
+                {{-- ... después de los campos del formulario de edición del estudiante ... --}}
+
+                <hr>
+
+                <h4>Horario de Servicio Social</h4>
+
+                @if($student->student->schedules->count() > 0)
+                    <p><strong>Horario Actual:</strong></p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr><th>Día</th><th>Inicio</th><th>Fin</th><th>Acción</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach($student->student->schedules as $schedule)
+                                <tr>
+                                    <td>{{ $schedule->day_of_week }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($schedule->start_time)->format('g:i A') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($schedule->end_time)->format('g:i A') }}</td>
+                                    <td>
+                                        <form action="{{ route('profesor.schedule.remove', $schedule->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <p>El estudiante aún no tiene un horario asignado.</p>
+                @endif
+
+                <h5>Agregar Nuevo Horario</h5>
+                <form action="{{ route('profesor.schedule.add', $student->id) }}" method="POST" class="mt-3">
+                    @csrf
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="day_of_week">Día</label>
+                            <select name="day_of_week" class="form-control" required>
+                                <option value="Lunes">Lunes</option>
+                                <option value="Martes">Martes</option>
+                                <option value="Miércoles">Miércoles</option>
+                                <option value="Jueves">Jueves</option>
+                                <option value="Viernes">Viernes</option>
+                                <option value="Sábado">Sábado</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="start_time">Hora Inicio</label>
+                            <input type="time" name="start_time" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="end_time">Hora Fin</label>
+                            <input type="time" name="end_time" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Agregar</button>
+                        </div>
                     </div>
                 </form>
             </div>

@@ -27,7 +27,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">Gestión de Alumnos</h4>
-                <a href="{{ route('professor.create.student') }}" class="btn btn-primary">Nuevo Alumno</a>
+                <a href="{{ route('profesor.create.student') }}" class="btn btn-primary">Agregar Alumno</a>
             </div>
             <div class="card-body">
                 <table class="table">
@@ -48,9 +48,9 @@
                             <td>{{ $student->password->matricula }}</td>
                             <td>{{ $student->student->estado_servicio }}</td>
                             <td>
-                                <a href="{{ route('professor.edit.student', $student->id) }}" 
+                                <a href="{{ route('profesor.edit.student', $student->id) }}" 
                                    class="btn btn-sm btn-info">Editar</a>
-                                <form action="{{ route('professor.destroy.student', $student->id) }}" 
+                                <form action="{{ route('profesor.destroy.student', $student->id) }}" 
                                       method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')

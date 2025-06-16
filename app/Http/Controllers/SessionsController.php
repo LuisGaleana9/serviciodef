@@ -6,70 +6,69 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User; // <-- Asegúrate de que esta línea esté presente
 
 class SessionsController extends Controller
 {
     public function login_post(Request $request)
     {
-        //declaramos variables capturando los datos del formulario
-        $matricula = request('matricula');
-        $password = request('password');
-        
-        //consulta a la base de datos de password verificando que la matricula sea igual a la capturada
-        $consulta = DB::table('passwords')
-        ->where('matricula', '=', $matricula)
-        ->get();
-        
-        //Verificar si la consulta retornó resultados
-        if($consulta->isEmpty()){ 
-            return redirect()->back()
-            ->withInput()
-            ->withErrors(['matricula' => 'La matrícula ('.$matricula.') no existe en el sistema']);
+        // 1. Validar los datos del formulario
+        $credentials = $request->validate([
+            'matricula' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
+
+        // 2. Buscar al usuario por su matrícula
+        $password_data = DB::table('passwords')->where('matricula', $credentials['matricula'])->first();
+
+        // 3. Verificar que el usuario y la contraseña sean correctos
+        if (!$password_data || !Hash::check($credentials['password'], $password_data->password)) {
+            return back()->withErrors([
+                'matricula' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
+            ])->onlyInput('matricula');
         }
 
- 
-            if(isset($consulta)){ 
-                if (Hash::check($password, $consulta[0]->password)) {
-                    //si es correcta la contraseña, consultamos el rol del usuario
-                    $consultarol = DB::table('users')
-                    ->where('id', '=', $consulta[0]->user_id)
-                    ->get();
-                    
-                    session([
-                        'id' => $consulta[0]->user_id,
-                        'matricula' => $consulta[0]->matricula,
-                        'role' => $consultarol[0]->role,
-                        'name' => $consultarol[0]->name,
-                        'email' => $consultarol[0]->email,
-                        'expired_at' => now()->addMinutes(30),
-                    ]);
-                    //verificamos el rol del usuario
-                    if ($consultarol[0]->role == 'root') {
-                        return redirect('/root');
-                    } elseif ($consultarol[0]->role == 'professor') {
-                        return redirect('/profesor');
-                    } elseif ($consultarol[0]->role == 'student') {
-                        return redirect('/student');
-                    }else{
-                        return redirect('/login');
-                    }
-                }else{
-                    //si la contraseña es incorrecta, se redirige a login
-                    return redirect()->back()
-                    ->withInput()
-                    ->withErrors(['matricula' => 'Contraseña incorrecta!']);
-                }
+        // 4. Si las credenciales son correctas, buscar el modelo de usuario
+        $user = User::find($password_data->user_id);
+
+        if (!$user) {
+             return back()->withErrors([
+                'matricula' => 'Ocurrió un error inesperado al intentar iniciar sesión.',
+            ])->onlyInput('matricula');
         }
-        return redirect('/login');
         
+        // 5. Iniciar sesión oficialmente en Laravel
+        Auth::login($user);
+
+        // 6. Regenerar la sesión para seguridad
+        $request->session()->regenerate();
+
+        // 7. Redirigir según el rol del usuario
+        if ($user->role == 'root') {
+            return redirect()->intended(route('root.index'));
+        }
+        
+        // CORRECCIÓN AQUÍ: Usar 'professor' y la ruta 'professor.index'
+        if ($user->role == 'professor') {
+            return redirect()->intended(route('professor.index'));
+        }
+        
+        if ($user->role == 'student') {
+            return redirect()->intended(route('alumno.panel'));
+        }
+
+        // Si no tiene un rol válido, lo deslogueamos y mandamos a login
+        Auth::logout();
+        return redirect('/login');
     }
 
-
-    public function destroy()
+    public function destroy(Request $request)
     {
-        //destruimos la sesion
-        session()->flush();
-        //se redirige a login
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect('/login');
     }
 }

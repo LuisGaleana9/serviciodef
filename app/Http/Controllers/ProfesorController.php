@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
+
 class ProfesorController extends Controller
 {
     public function index()
@@ -126,7 +127,6 @@ class ProfesorController extends Controller
         }   
     }
 
-
     //Eliminar Estudiante
     public function destroyStudent($id)
     {
@@ -135,6 +135,44 @@ class ProfesorController extends Controller
 
         return redirect()->route('professor.index')
             ->with('success', 'Estudiante eliminado exitosamente');
+    }
+
+     /**
+     * Agrega un nuevo horario para un estudiante.
+     */
+    public function addSchedule(Request $request, $student_user_id)
+    {
+        $request->validate([
+            'day_of_week' => 'required|string',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+        ]);
+
+        // Buscamos al estudiante para asegurar que existe
+        $student = Student::where('user_id', $student_user_id)->firstOrFail();
+        
+        // Creamos el horario usando la relación
+        $student->schedules()->create($request->all());
+
+        return back()->with('success', 'Horario agregado correctamente.');
+    }
+
+    /**
+     * Elimina un horario.
+     */
+    public function removeSchedule(Schedule $schedule)
+    {
+        $schedule->delete();
+        return back()->with('success', 'Horario eliminado correctamente.');
+    }
+
+    // Asegúrate de que tu método 'edit' cargue los horarios
+    public function edit($id)
+    {
+        $studentUser = User::findOrFail($id);
+        // Carga la relación 'student' y anidada la de 'schedules'
+        $studentUser->load('student.schedules');
+        return view('profesor.edit_students', ['student' => $studentUser]);
     }
         
 }

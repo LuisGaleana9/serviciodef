@@ -13,7 +13,7 @@
                 <h4>Crear Nuevo Alumno</h4>
             </div>
             <div class="card-body">
-                <form action="{{ route('professor.store.student') }}" method="POST">
+                <form action="{{ route('profesor.store.student') }}" method="POST" class="register-form" id="register-form">
                     @csrf
                     
                     <div class="mb-3">
